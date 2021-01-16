@@ -8,14 +8,15 @@ The goal is to configure an API Key and other user's data as WP admin, then gene
 
 Finally, auto insert the shortcode in a desired place, page or post.
 
-Plugin name: 'local-weather'
-Function and global variables prefix: 'lwd_<valid_name>'
-Github project: 'https://github.com/amrbass/local-weather-data.git' (started as private)
-Public web page url: 'https://ancdretaeixample.cat//sw/info/local-weather/index.php'
+* Plugin name: `local-weather`
+* Function and global variables prefix: `lwd_<valid_name>`
+* [Github project](https://github.com/amrbass/local-weather-data.git) `started as private`
+* [Public web page url](https://ancdretaeixample.cat/sw/info/local-weather/index.php)
 
-# ================================================
-# following info left "as is" for my reference
-# ================================================
+##### ================================================
+##### following info left "as is" for my reference
+#####  ================================================
+
 # WordPress Plugin Boilerplate
 
 A standardized, organized, object-oriented foundation for building high-quality WordPress Plugins.
