@@ -2,6 +2,7 @@
 conf.php
 *.code-workspace
 logs/
+local-weather.zip
 
 # Numerous always-ignore extensions
 *.diff
