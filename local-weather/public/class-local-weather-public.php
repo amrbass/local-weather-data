@@ -100,4 +100,15 @@ class Local_Weather_Public {
 
 	}
 
+	/**
+	 * Handler for [lwd-local-weather] shortcode.
+	 *
+	 * @since    1.0.0
+	 */
+	public function lwd_local_weather_handler() {
+
+		echo 'Local Weather plugin';
+
+	}
+
 }

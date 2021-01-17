@@ -42,7 +42,16 @@ class Local_Weather_Loader {
 	protected $filters;
 
 	/**
-	 * Initialize the collections used to maintain the actions and filters.
+	 * The array of shortcodes registered with WordPress.
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * @var      array    $shortcodes    The shortcodes registered with WordPress to fire when the shortcode tag is found.
+	 */
+	protected $shortcodes;
+
+	/**
+	 * Initialize the collections used to maintain the actions, filters and shortcodes.
 	 *
 	 * @since    1.0.0
 	 */
@@ -50,6 +59,7 @@ class Local_Weather_Loader {
 
 		$this->actions = array();
 		$this->filters = array();
+		$this->shortcodes = array();
 
 	}
 
@@ -82,18 +92,31 @@ class Local_Weather_Loader {
 	}
 
 	/**
+     * Add a new shortcode to the collection to be registered with WordPress
+     *
+     * @since     1.0.0
+     * @param     string        $tag           The name of the new shortcode.
+     * @param     object        $component      A reference to the instance of the object on which the shortcode is defined.
+     * @param     string        $callback       The name of the function that defines the shortcode.
+     */
+    
+	public function add_shortcode( $tag, $component, $callback, $priority = 10, $accepted_args = 2 ) {
+        $this->shortcodes = $this->add( $this->shortcodes, $tag, $component, $callback, $priority, $accepted_args );
+    }
+
+	/**
 	 * A utility function that is used to register the actions and hooks into a single
 	 * collection.
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @param    array                $hooks            The collection of hooks that is being registered (that is, actions or filters).
+	 * @param    array                $hooks            The collection of hooks that is being registered (that is, actions, filters or shortcodes).
 	 * @param    string               $hook             The name of the WordPress filter that is being registered.
 	 * @param    object               $component        A reference to the instance of the object on which the filter is defined.
 	 * @param    string               $callback         The name of the function definition on the $component.
 	 * @param    int                  $priority         The priority at which the function should be fired.
 	 * @param    int                  $accepted_args    The number of arguments that should be passed to the $callback.
-	 * @return   array                                  The collection of actions and filters registered with WordPress.
+	 * @return   array                                  The collection of actions, filters and shortcodes registered with WordPress.
 	 */
 	private function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ) {
 
@@ -110,7 +133,7 @@ class Local_Weather_Loader {
 	}
 
 	/**
-	 * Register the filters and actions with WordPress.
+	 * Register the shortrcodes, filters and actions with WordPress.
 	 *
 	 * @since    1.0.0
 	 */
@@ -123,6 +146,10 @@ class Local_Weather_Loader {
 		foreach ( $this->actions as $hook ) {
 			add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
 		}
+		
+		foreach ( $this->shortcodes as $hook ) {
+            add_shortcode( $hook['hook'], array( $hook['component'], $hook['callback'] ) );
+        }
 
 	}
 

@@ -40,6 +40,15 @@ class Local_Weather {
 	protected $loader;
 
 	/**
+	 * The public class responsible for managing all public functions of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * @var      Local_Weather_Loader    $plugin_public    Public functions for the plugin.
+	 */
+	protected $plugin_public;
+
+	/**
 	 * The unique identifier of this plugin.
 	 *
 	 * @since    1.0.0
@@ -78,6 +87,7 @@ class Local_Weather {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->define_public_shortcodes();
 
 	}
 
@@ -123,6 +133,7 @@ class Local_Weather {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-local-weather-public.php';
 
 		$this->loader = new Local_Weather_Loader();
+		$this->plugin_public = new Local_Weather_Public( $this->get_local_weather(), $this->get_version() );
 
 	}
 
@@ -168,10 +179,21 @@ class Local_Weather {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Local_Weather_Public( $this->get_local_weather(), $this->get_version() );
+		$this->loader->add_action( 'wp_enqueue_scripts', $this->plugin_public, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $this->plugin_public, 'enqueue_scripts' );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+	}
+
+	/**
+	 * Register all shortcode tags related to the public-facing functionality
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_public_shortcodes() {
+
+		$this->loader->add_shortcode( 'lwd-local-weather', $this->plugin_public, 'lwd_local_weather_handler' );
 
 	}
 
