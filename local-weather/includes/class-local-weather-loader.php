@@ -100,7 +100,7 @@ class Local_Weather_Loader {
      * @param     string        $callback       The name of the function that defines the shortcode.
      */
     
-	public function add_shortcode( $tag, $component, $callback, $priority = 10, $accepted_args = 2 ) {
+	public function add_shortcode( $tag, $component, $callback, $priority = 10, $accepted_args = 3 ) {
         $this->shortcodes = $this->add( $this->shortcodes, $tag, $component, $callback, $priority, $accepted_args );
     }
 

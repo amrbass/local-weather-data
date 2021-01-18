@@ -104,11 +104,32 @@ class Local_Weather_Public {
 	 * Handler for [lwd-local-weather] shortcode.
 	 *
 	 * @since    1.0.0
+	 * @param    array	$atts		[$tag] attributes
+	 * @param    string	$content	post content
+	 * @param    string	$tag		the name of the [$tag] (i.e. the name of the shortcode)
 	 */
-	public function lwd_local_weather_handler() {
+	public function lwd_local_weather_handler( $atts = array(), $content = null, $tag = '' ) {
 
-		echo 'Local Weather plugin';
+		if(is_null($content))	{	//only for self-closing shortcode
+			// normalize attribute keys, lowercase
+			$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
+			// override default attributes with user attributes
+			$lwd_atts = shortcode_atts(
+				array(
+					'country' => 'es',
+					'zipcode' => '08009',
+				), $atts, $tag
+			);
+
+			$o = '<h2>Local Weather plugin</h2>';
+			$o .= '<table class="lwd_table" style="width:40%;">';
+			$o .= '<tr><th>Country</th><th>ZIP Code</th></tr>';
+			$o .= '<tr><td>'.$lwd_atts['country'].'</td><td>'.$lwd_atts['zipcode'].'</td></tr>';
+			$o .= '</table>';
+
+			return $o;
+		}
 	}
 
 }

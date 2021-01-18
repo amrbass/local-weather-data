@@ -2,3 +2,17 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+ 
+	table.lwd_table	{
+		font-family: arial, sans-serif;
+		border-collapse: collapse;
+		width: 100%;
+		text-align: center;
+		color: #CDD500;
+		background-color: #003366;
+		table-layout: fixed;
+	}
+
+	td, th {
+		padding: 0px 20px 0px 20px;
+	}
