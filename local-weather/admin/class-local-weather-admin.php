@@ -110,7 +110,7 @@ class Local_Weather_Admin {
 	public function addPluginAdminMenu() {
 
 		//add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position );
-		add_menu_page(  $this->local_weather, 'Local Weather', 'administrator', $this->local_weather, array( $this, 'displayPluginAdminDashboard' ), 'dashicons-cloud', 26 );
+		add_menu_page(  $this->local_weather, 'General info', 'administrator', $this->local_weather, array( $this, 'displayPluginAdminDashboard' ), 'dashicons-cloud', 26 );
 		
 		//add_submenu_page( '$parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
 		add_submenu_page( $this->local_weather, 'Local Weather Settings', 'Settings', 'administrator', $this->local_weather.'-settings', array( $this, 'displayPluginAdminSettings' ));
@@ -139,7 +139,7 @@ class Local_Weather_Admin {
 			add_action('admin_notices', array($this,'localWeatherSettingsMessages'));
 			do_action( 'admin_notices', $_GET['error_message'] );
 		}
-		require_once 'partials/'.$this->plugin_name.'-admin-settings-display.php';
+		require_once 'partials/'.$this->local_weather.'-admin-settings-display.php';
 	}
 	
 	/**
@@ -174,6 +174,7 @@ class Local_Weather_Admin {
 	 */
 	public function registerAndBuildFields() {
 		/**
+		 * For each filed, do as follows.
 		 * First, we add_settings_section. This is necessary since all future settings must belong to one.
 		 * Second, add_settings_field
 		 * Third, register_setting
@@ -188,12 +189,13 @@ class Local_Weather_Admin {
 			// Page on which to add this section of options
 			'local_weather_general_settings'                   
 		);
+
 		unset($args);
 		$args = array (
 				'type'				=> 'input',
 				'subtype'			=> 'text',
-				'id'				=> 'local_weather_example_setting',
-				'name'				=> 'local_weather_example_setting',
+				'id'				=> 'local_weather_country',
+				'name'				=> 'local_weather_country',
 				'required'			=> 'true',
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
@@ -201,17 +203,87 @@ class Local_Weather_Admin {
 		);
 		add_settings_field(
 				'local_weather_example_setting',
-				'Example Setting',
+				'1) Country code:',
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
 				'local_weather_general_section',
 				$args
 		);
-
-
 		register_setting(
 				'local_weather_general_settings',
-				'local_weather_example_setting'
+				'local_weather_country'
+		);
+
+		unset($args);
+		$args = array (
+				'type'				=> 'input',
+				'subtype'			=> 'text',
+				'id'				=> 'local_weather_zipcode',
+				'name'				=> 'local_weather_zipcode',
+				'required'			=> 'true',
+				'get_options_list'	=> '',
+				'value_type'		=> 'normal',
+				'wp_data'			=> 'option'
+		);
+		add_settings_field(
+				'local_weather_zipcode',
+				'2) ZIP code:',
+				array( $this, 'local_weather_render_settings_field' ),
+				'local_weather_general_settings',
+				'local_weather_general_section',
+				$args
+		);
+		register_setting(
+				'local_weather_general_settings',
+				'local_weather_zipcode'
+		);
+
+		unset($args);
+		$args = array (
+				'type'				=> 'input',
+				'subtype'			=> 'text',
+				'id'				=> 'local_weather_units',
+				'name'				=> 'local_weather_units',
+				'required'			=> 'true',
+				'get_options_list'	=> '',
+				'value_type'		=> 'normal',
+				'wp_data'			=> 'option'
+		);
+		add_settings_field(
+				'local_weather_zipcode',
+				'3) Units:',
+				array( $this, 'local_weather_render_settings_field' ),
+				'local_weather_general_settings',
+				'local_weather_general_section',
+				$args
+		);
+		register_setting(
+				'local_weather_general_settings',
+				'local_weather_units'
+		);
+
+		unset($args);
+		$args = array (
+				'type'				=> 'input',
+				'subtype'			=> 'text',
+				'id'				=> 'local_weather_apikey',
+				'name'				=> 'local_weather_apikey',
+				'required'			=> 'true',
+				'get_options_list'	=> '',
+				'value_type'		=> 'normal',
+				'wp_data'			=> 'option'
+		);
+		add_settings_field(
+				'local_weather_zipcode',
+				'4) OpenWeatherMap API Key:',
+				array( $this, 'local_weather_render_settings_field' ),
+				'local_weather_general_settings',
+				'local_weather_general_section',
+				$args
+		);
+		register_setting(
+				'local_weather_general_settings',
+				'local_weather_apikey'
 		);
 
 	}
@@ -222,7 +294,13 @@ class Local_Weather_Admin {
 	 * @since	1.0.0
 	 */
 	public function local_weather_display_general_account() {
-		echo '<p>These settings apply to all Local Weather functionality.</p>';
+		$o = '<h4>Settings required for <b>Local Weather</b> functionality, with parameter description.</h4>';
+		$o .= '<ol><li><b>Country code:</b> a 2 letters contry code as defined in ISO 3166-1 alpha-2.</li>';
+		$o .= '<li><b>ZIP Code:</b> your target area 5 digits postal code</li>';
+		$o .= '<li><b>Units:</b> required measurement units system (standard, metric, imperial)</li>';
+		$o .= '<li><b>Your own OpenWeatherMap API Key</b> (do not share nor publish)</li></ol>';
+
+		return $o;
 	}
 
 	/**

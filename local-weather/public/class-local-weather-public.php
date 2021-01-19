@@ -27,6 +27,15 @@ class Local_Weather_Public {
 	 *
 	 * @since    1.0.0
 	 * @access   private
+	 * @var      array    $lwd_countries    Array of countries and codes.
+	 */
+	private $lwd_countries;
+
+	/**
+	 * The ID of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
 	 * @var      string    $local_weather    The ID of this plugin.
 	 */
 	private $local_weather;
@@ -51,6 +60,9 @@ class Local_Weather_Public {
 
 		$this->local_weather = $local_weather;
 		$this->version = $version;
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/local-weather-countries.php';
+		$this->lwd_countries = $lwd_countries;
 
 	}
 
@@ -110,26 +122,36 @@ class Local_Weather_Public {
 	 */
 	public function lwd_local_weather_handler( $atts = array(), $content = null, $tag = '' ) {
 
-		if(is_null($content))	{	//only for self-closing shortcode
-			// normalize attribute keys, lowercase
-			$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+		$units = ['standard','metric','imperial'];	//OWM API units allowed
 
-			// override default attributes with user attributes
-			$lwd_atts = shortcode_atts(
-				array(
-					'country' => 'es',
-					'zipcode' => '08009',
-				), $atts, $tag
-			);
-
-			$o = '<h2>Local Weather plugin</h2>';
-			$o .= '<table class="lwd_table" style="width:40%;">';
-			$o .= '<tr><th>Country</th><th>ZIP Code</th></tr>';
-			$o .= '<tr><td>'.$lwd_atts['country'].'</td><td>'.$lwd_atts['zipcode'].'</td></tr>';
-			$o .= '</table>';
-
-			return $o;
+		$o = "Local Weather plugin";
+		if($content == "")	{	//only for self-closing shortcode
+			$title = '<h2>Local Weather data</h2>';
+		}	else	{
+			$title = $content;
 		}
+		$o = '<h2 class="lwd_title">'.$title.'</h2>';
+
+		// normalize attribute keys, lowercase
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+
+		// override default attributes with user attributes
+		$lwd_atts = shortcode_atts(
+			array(
+				'country' => 'es',
+				'zipcode' => '08009',
+				'units' => $units[1],
+			), $atts, $tag
+		);
+
+		$o .= '<table class="lwd_table" style="width:40%;">';
+		$o .= '<tr><td class="lwd_cell">Country:</td><td class="lwd_cell">'.$lwd_atts['country'].' ('.$this->lwd_countries[strtolower($lwd_atts['country'])].')</td></tr>';
+		$o .= '<tr><td class="lwd_cell">ZIP Code:</td><td class="lwd_cell">'.$lwd_atts['zipcode'].'</td></tr>';
+		$o .= '<tr><td class="lwd_cell">Units:</td><td class="lwd_cell">'.$lwd_atts['units'].'</td></tr>';
+		$o .= '<tr><td class="lwd_cell">Language:</td><td class="lwd_cell">'.get_locale().'</td></tr>';
+		$o .= '</table>';
+
+		return $o;
 	}
 
 }

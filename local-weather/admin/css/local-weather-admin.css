@@ -2,3 +2,22 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+ 
+.lwd_display {
+	border: #E0E0E0 1px solid;
+	padding: 20px 40px 40px 40px;
+	border-radius: 2px;
+	width: 750px;
+	margin: 0 auto;
+}
+
+.lwd_weather_icon {
+	vertical-align: middle;
+	margin-right: 20px;
+}
+
+.lwd_time {
+	line-height: 25px;
+	border-top: 3px solid #E0E0E0;
+	border-bottom: 5px solid #E0E0E0;
+}

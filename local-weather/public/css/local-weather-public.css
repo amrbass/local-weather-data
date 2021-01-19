@@ -3,16 +3,24 @@
  * included in this file.
  */
  
-	table.lwd_table	{
-		font-family: arial, sans-serif;
-		border-collapse: collapse;
-		width: 100%;
+	.lwd_title {
 		text-align: center;
-		color: #CDD500;
-		background-color: #003366;
-		table-layout: fixed;
+		text-decoration: solid;
+	}
+	
+	.lwd_table	{
+		font-family: arial, sans-serif;
+		color: black;
+		background-color: white;
+		border: none;
+		border-collapse: collapse;
+		table-layout: auto;
+		margin-left: auto;
+		margin-right: auto;
 	}
 
-	td, th {
-		padding: 0px 20px 0px 20px;
+	.lwd_cell {
+		padding: 0px 0px 0px 20px;
+		text-align: left;
+		border: none;
 	}
