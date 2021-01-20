@@ -110,7 +110,7 @@ class Local_Weather_Admin {
 	public function addPluginAdminMenu() {
 
 		//add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position );
-		add_menu_page(  $this->local_weather, 'General info', 'administrator', $this->local_weather, array( $this, 'displayPluginAdminDashboard' ), 'dashicons-cloud', 26 );
+		add_menu_page(  $this->local_weather, 'Local Weather', 'administrator', $this->local_weather, array( $this, 'displayPluginAdminDashboard' ), 'dashicons-cloud', 26 );
 		
 		//add_submenu_page( '$parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
 		add_submenu_page( $this->local_weather, 'Local Weather Settings', 'Settings', 'administrator', $this->local_weather.'-settings', array( $this, 'displayPluginAdminSettings' ));
@@ -183,7 +183,7 @@ class Local_Weather_Admin {
 			// ID used to identify this section and with which to register options
 			'local_weather_general_section',
 			// Title to be displayed on the administration page
-			'',
+			'Basic options:',
 			// Callback used to render the description of the section
 			array( $this, 'local_weather_display_general_account' ),
 			// Page on which to add this section of options
@@ -199,10 +199,12 @@ class Local_Weather_Admin {
 				'required'			=> 'true',
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
-				'wp_data'			=> 'option'
+				'wp_data'			=> 'option',
+				'append_text'		=> ' (2 letters country code)',
+				'text_size'			=> '2'
 		);
 		add_settings_field(
-				'local_weather_example_setting',
+				'local_weather_country',
 				'1) Country code:',
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
@@ -211,7 +213,8 @@ class Local_Weather_Admin {
 		);
 		register_setting(
 				'local_weather_general_settings',
-				'local_weather_country'
+				'local_weather_country',
+				array('sanitize_callback' => array( $this, 'sanitize_local_weather_country' )),
 		);
 
 		unset($args);
@@ -223,11 +226,13 @@ class Local_Weather_Admin {
 				'required'			=> 'true',
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
-				'wp_data'			=> 'option'
+				'wp_data'			=> 'option',
+				'append_text'		=> ' (a valid postal code)',
+				'text_size'			=> '10'
 		);
 		add_settings_field(
 				'local_weather_zipcode',
-				'2) ZIP code:',
+				'2) Postal code:',
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
 				'local_weather_general_section',
@@ -247,10 +252,12 @@ class Local_Weather_Admin {
 				'required'			=> 'true',
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
-				'wp_data'			=> 'option'
+				'wp_data'			=> 'option',
+				'append_text'		=> ' (standard, metric or imperial)',
+				'text_size'			=> '8'
 		);
 		add_settings_field(
-				'local_weather_zipcode',
+				'local_weather_units',
 				'3) Units:',
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
@@ -271,10 +278,11 @@ class Local_Weather_Admin {
 				'required'			=> 'true',
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
-				'wp_data'			=> 'option'
+				'wp_data'			=> 'option',
+				'append_text'		=> ' (your OWM API key)',
 		);
 		add_settings_field(
-				'local_weather_zipcode',
+				'local_weather_apikey',
 				'4) OpenWeatherMap API Key:',
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
@@ -293,14 +301,15 @@ class Local_Weather_Admin {
 	 *
 	 * @since	1.0.0
 	 */
-	public function local_weather_display_general_account() {
-		$o = '<h4>Settings required for <b>Local Weather</b> functionality, with parameter description.</h4>';
+	public function local_weather_display_general_account( $arg ) {
+		$o = "<div><h4>Enter setting's values required for <b>Local Weather</b> operation. See parameter descriptions.</h4>";
+		$o .= '<p>'.$arg['title'].'</p>';
 		$o .= '<ol><li><b>Country code:</b> a 2 letters contry code as defined in ISO 3166-1 alpha-2.</li>';
-		$o .= '<li><b>ZIP Code:</b> your target area 5 digits postal code</li>';
+		$o .= '<li><b>Postal code:</b> your target area postal code</li>';
 		$o .= '<li><b>Units:</b> required measurement units system (standard, metric, imperial)</li>';
-		$o .= '<li><b>Your own OpenWeatherMap API Key</b> (do not share nor publish)</li></ol>';
+		$o .= '<li><b>Your own OpenWeatherMap API Key</b> (do not share nor publish)</li></ol></div>';
 
-		return $o;
+		echo $o;
 	}
 
 	/**
@@ -337,26 +346,58 @@ class Local_Weather_Admin {
 				if($args['subtype'] != 'checkbox')	{
 					$prependStart = (isset($args['prepend_value'])) ? '<div class="input-prepend"> <span class="add-on">'.$args['prepend_value'].'</span>' : '';
 					$prependEnd = (isset($args['prepend_value'])) ? '</div>' : '';
+					$appendText = (isset($args['append_text'])) ? $args['append_text'] : '';
+					$size = (isset($args['text_size'])) ? $args['text_size'] : '40';
 					$step = (isset($args['step'])) ? 'step="'.$args['step'].'"' : '';
 					$min = (isset($args['min'])) ? 'min="'.$args['min'].'"' : '';
 					$max = (isset($args['max'])) ? 'max="'.$args['max'].'"' : '';
 					if(isset($args['disabled'])){
 						// hide the actual input bc if it was just a disabled input the info saved in the database would be wrong - bc it would pass empty values and wipe the actual information
-						echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'_disabled" '.$step.' '.$max.' '.$min.' name="'.$args['name'].'_disabled" size="40" disabled value="' . esc_attr($value) . '" /><input type="hidden" id="'.$args['id'].'" '.$step.' '.$max.' '.$min.' name="'.$args['name'].'" size="40" value="' . esc_attr($value) . '" />'.$prependEnd;
+						echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'_disabled" '.$step.' '.$max.' '.$min.' name="'.$args['name'].'_disabled" size="'.$size.'" disabled value="' . esc_attr($value) . '" /><input type="hidden" id="'.$args['id'].'" '.$step.' '.$max.' '.$min.' name="'.$args['name'].'" size="'.$size.'" value="' . esc_attr($value) . '" />'.$appendText.$prependEnd;
 					} else {
-						echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'" "'.$args['required'].'" '.$step.' '.$max.' '.$min.' name="'.$args['name'].'" size="40" value="' . esc_attr($value) . '" />'.$prependEnd;
+						echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'" "'.$args['required'].'" '.$step.' '.$max.' '.$min.' name="'.$args['name'].'" size="'.$size.'" value="' . esc_attr($value) . '" />'.$appendText.$prependEnd;
 					}
 					/*<input required="required" '.$disabled.' type="number" step="any" id="'.$this->plugin_name.'_cost2" name="'.$this->plugin_name.'_cost2" value="' . esc_attr( $cost ) . '" size="25" /><input type="hidden" id="'.$this->plugin_name.'_cost" step="any" name="'.$this->plugin_name.'_cost" value="' . esc_attr( $cost ) . '" />*/
 
 				}	else	{
 					$checked = ($value) ? 'checked' : '';
-					echo '<input type="'.$args['subtype'].'" id="'.$args['id'].'" "'.$args['required'].'" name="'.$args['name'].'" size="40" value="1" '.$checked.' />';
+					echo '<input type="'.$args['subtype'].'" id="'.$args['id'].'" "'.$args['required'].'" name="'.$args['name'].'" size="'.$size.'" value="1" '.$checked.' />'.$appendText;
 				}
 				break;
 			default:
 				# code...
 				break;
 		}
+	}
+
+	/**
+	 * Sanitize Country code input text.
+	 *
+	 * @since	1.0.0
+	 * @param	string	$input	The value entered by the user.
+	 * @return	string	The corrected value.
+	 */
+	public function sanitize_local_weather_country( $input )	{
+
+		//sanitize
+		error_log("inside 'sanitize_local_weather_country'");
+		error_log("Passed argument: ".$input);
+
+		// Create our array for storing the validated options
+		//$output = array();
+
+		// Loop through each of the incoming options
+		/* foreach( $input as $key => $value ) {
+			error_log($key." -> ".$value);
+			// Check to see if the current option has a value. If so, process it.
+			if( isset( $input[$key] ) ) {
+				// Strip all HTML and PHP tags and properly handle quoted strings
+				$output[$key] = sanitize_text_field( $input[ $key ] );
+			} // end if
+		} // end foreach */
+		$output = sanitize_text_field($input);
+
+		return $output;
 	}
 
 }
