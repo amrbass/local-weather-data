@@ -240,7 +240,8 @@ class Local_Weather_Admin {
 		);
 		register_setting(
 				'local_weather_general_settings',
-				'local_weather_zipcode'
+				'local_weather_zipcode',
+				array('sanitize_callback' => array( $this, 'sanitize_local_weather_zipcode' )),
 		);
 
 		unset($args);
@@ -266,7 +267,8 @@ class Local_Weather_Admin {
 		);
 		register_setting(
 				'local_weather_general_settings',
-				'local_weather_units'
+				'local_weather_units',
+				array('sanitize_callback' => array( $this, 'sanitize_local_weather_units' )),
 		);
 
 		unset($args);
@@ -291,7 +293,8 @@ class Local_Weather_Admin {
 		);
 		register_setting(
 				'local_weather_general_settings',
-				'local_weather_apikey'
+				'local_weather_apikey',
+				array('sanitize_callback' => array( $this, 'sanitize_local_weather_apikey' )),
 		);
 
 	}
@@ -380,22 +383,88 @@ class Local_Weather_Admin {
 	public function sanitize_local_weather_country( $input )	{
 
 		//sanitize
-		error_log("inside 'sanitize_local_weather_country'");
+		$output = strtolower(sanitize_text_field($input));
+
+		//detect a 2 letters country code
+		if(!preg_match('/^[a-zA-Z]{2}$/', $output))	{
+			if (strlen($output) > 2) {
+				$output = substr($output, 0, 2);
+			}	else	{
+				$output = 'us';
+			}
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Sanitize Postal code input text.
+	 *
+	 * @since	1.0.0
+	 * @param	string	$input	The value entered by the user.
+	 * @return	string	The corrected value.
+	 */
+	public function sanitize_local_weather_zipcode( $input )	{
+
+		//sanitize
+		$output = strtoupper(sanitize_text_field($input));
+
+		//detect a 5 alpha/digits postal code
+		if(!preg_match('/^[a-zA-Z0-9]+[a-zA-Z0-9\-]{4}$/', $output))	{
+			//it's unclear the ZIP code format OWM expects. Most probably, only a total of 5 alpha/digits
+			//but real Postal codes may be as long as 10 digits in some countries
+			if (strlen($output) > 5) {
+				$output = substr($output, 0, 5);
+			}	else	{
+				$output = '08514';
+			}
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Sanitize Units input text.
+	 *
+	 * @since	1.0.0
+	 * @param	string	$input	The value entered by the user.
+	 * @return	string	The corrected value.
+	 */
+	public function sanitize_local_weather_units( $input )	{
+
+		$units = ['standard','metric','imperial'];	//OWM API units allowed
+
+		//sanitize
+		$output = strtolower(sanitize_text_field($input));
+
+		//chack if entered text is in $units array
+		if (!in_array($output, $units)) {
+			$output = $units[1];
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Sanitize API key input text.
+	 *
+	 * @since	1.0.0
+	 * @param	string	$input	The value entered by the user.
+	 * @return	string	The corrected value.
+	 */
+	public function sanitize_local_weather_apikey( $input )	{
+
+		//sanitize
+		error_log("inside 'sanitize_local_weather_apikey'");
 		error_log("Passed argument: ".$input);
 
-		// Create our array for storing the validated options
-		//$output = array();
-
-		// Loop through each of the incoming options
-		/* foreach( $input as $key => $value ) {
-			error_log($key." -> ".$value);
-			// Check to see if the current option has a value. If so, process it.
-			if( isset( $input[$key] ) ) {
-				// Strip all HTML and PHP tags and properly handle quoted strings
-				$output[$key] = sanitize_text_field( $input[ $key ] );
-			} // end if
-		} // end foreach */
 		$output = sanitize_text_field($input);
+
+		//detect a 5 alpha/digits postal code
+		if(!preg_match('/^[a-zA-Z0-9]{32}$/', $output))	{
+			$output = 'badAPIkey';
+		}
+		error_log("Returned value: ".$output);
 
 		return $output;
 	}

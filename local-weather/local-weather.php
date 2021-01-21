@@ -16,7 +16,7 @@
  * Plugin Name:       Local Weather
  * Plugin URI:        https://ancdretaeixample.cat//sw/info/local-weather/index.php
  * Description:       Display local weather info using a shortcode. API key for OpenWeatherMap and local data should be provided.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Antoni Mas
  * Author URI:        https://ancdretaeixample.cat/
  * License:           GPL-2.0+
@@ -35,7 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'LOCAL_WEATHER_VERSION', '1.0.0' );
+define( 'LOCAL_WEATHER_VERSION', '1.0.1' );
 
 /**
  * The code that runs during plugin activation.
