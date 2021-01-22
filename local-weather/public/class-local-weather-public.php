@@ -126,6 +126,7 @@ class Local_Weather_Public {
 
 	/**
 	 * Handler for [lwd-local-weather] shortcode.
+	 * This function renders the provided shortcode options into HTML.
 	 *
 	 * @since    1.0.0
 	 * @param    array	$atts		[$tag] attributes
@@ -156,7 +157,8 @@ class Local_Weather_Public {
 			), $atts, $tag
 		);
 
-		$o .= '<table class="lwd_table" style="width:40%;">';
+		$o .= '<table class="lwd_table" style="width:60%;">';
+		$o .= '<caption>API Key used: '.get_option($this->lwd_keys[LWD_APIKEY]).'</caption>';
 		$o .= '<tr><td class="lwd_cell">Country:</td><td class="lwd_cell">'.$lwd_atts['country'].' ('.$this->lwd_countries[strtolower($lwd_atts['country'])].')</td></tr>';
 		$o .= '<tr><td class="lwd_cell">ZIP Code:</td><td class="lwd_cell">'.$lwd_atts['zipcode'].'</td></tr>';
 		$o .= '<tr><td class="lwd_cell">Units:</td><td class="lwd_cell">'.$lwd_atts['units'].'</td></tr>';

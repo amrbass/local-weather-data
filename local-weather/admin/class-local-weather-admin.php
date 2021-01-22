@@ -218,8 +218,8 @@ class Local_Weather_Admin {
 		$args = array (
 				'type'				=> 'input',
 				'subtype'			=> 'text',
-				'id'				=> 'local_weather_country',
-				'name'				=> 'local_weather_country',
+				'id'				=> $this->lwd_keys[LWD_COUNTRY],
+				'name'				=> $this->lwd_keys[LWD_COUNTRY],
 				'required'			=> 'true',
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
@@ -228,7 +228,7 @@ class Local_Weather_Admin {
 				'text_size'			=> '2'
 		);
 		add_settings_field(
-				'local_weather_country',
+				$this->lwd_keys[LWD_COUNTRY],
 				'1) Country code:',
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
@@ -237,7 +237,7 @@ class Local_Weather_Admin {
 		);
 		register_setting(
 				'local_weather_general_settings',
-				'local_weather_country',
+				$this->lwd_keys[LWD_COUNTRY],
 				array('sanitize_callback' => array( $this, 'sanitize_local_weather_country' )),
 		);
 
@@ -245,8 +245,8 @@ class Local_Weather_Admin {
 		$args = array (
 				'type'				=> 'input',
 				'subtype'			=> 'text',
-				'id'				=> 'local_weather_zipcode',
-				'name'				=> 'local_weather_zipcode',
+				'id'				=> $this->lwd_keys[LWD_ZIPCODE],
+				'name'				=> $this->lwd_keys[LWD_ZIPCODE],
 				'required'			=> 'true',
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
@@ -255,7 +255,7 @@ class Local_Weather_Admin {
 				'text_size'			=> '10'
 		);
 		add_settings_field(
-				'local_weather_zipcode',
+				$this->lwd_keys[LWD_ZIPCODE],
 				'2) Postal code:',
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
@@ -264,7 +264,7 @@ class Local_Weather_Admin {
 		);
 		register_setting(
 				'local_weather_general_settings',
-				'local_weather_zipcode',
+				$this->lwd_keys[LWD_ZIPCODE],
 				array('sanitize_callback' => array( $this, 'sanitize_local_weather_zipcode' )),
 		);
 
@@ -272,8 +272,8 @@ class Local_Weather_Admin {
 		$args = array (
 				'type'				=> 'input',
 				'subtype'			=> 'text',
-				'id'				=> 'local_weather_units',
-				'name'				=> 'local_weather_units',
+				'id'				=> $this->lwd_keys[LWD_UNITS],
+				'name'				=> $this->lwd_keys[LWD_UNITS],
 				'required'			=> 'true',
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
@@ -282,7 +282,7 @@ class Local_Weather_Admin {
 				'text_size'			=> '8'
 		);
 		add_settings_field(
-				'local_weather_units',
+				$this->lwd_keys[LWD_UNITS],
 				'3) Units:',
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
@@ -291,7 +291,7 @@ class Local_Weather_Admin {
 		);
 		register_setting(
 				'local_weather_general_settings',
-				'local_weather_units',
+				$this->lwd_keys[LWD_UNITS],
 				array('sanitize_callback' => array( $this, 'sanitize_local_weather_units' )),
 		);
 
@@ -299,8 +299,8 @@ class Local_Weather_Admin {
 		$args = array (
 				'type'				=> 'input',
 				'subtype'			=> 'text',
-				'id'				=> 'local_weather_apikey',
-				'name'				=> 'local_weather_apikey',
+				'id'				=> $this->lwd_keys[LWD_APIKEY],
+				'name'				=> $this->lwd_keys[LWD_APIKEY],
 				'required'			=> 'true',
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
@@ -308,7 +308,7 @@ class Local_Weather_Admin {
 				'append_text'		=> ' (your OWM API key)',
 		);
 		add_settings_field(
-				'local_weather_apikey',
+				$this->lwd_keys[LWD_APIKEY],
 				'4) OpenWeatherMap API Key:',
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
@@ -317,7 +317,7 @@ class Local_Weather_Admin {
 		);
 		register_setting(
 				'local_weather_general_settings',
-				'local_weather_apikey',
+				$this->lwd_keys[LWD_APIKEY],
 				array('sanitize_callback' => array( $this, 'sanitize_local_weather_apikey' )),
 		);
 
@@ -495,9 +495,9 @@ class Local_Weather_Admin {
 	}
 
 	private function lwd_generate_button_run()	{
-		$country = get_option('local_weather_country');
-		$zipcode = get_option('local_weather_zipcode');
-		$units = get_option('local_weather_units');
+		$country = get_option($this->lwd_keys[LWD_COUNTRY]);
+		$zipcode = get_option($this->lwd_keys[LWD_ZIPCODE]);
+		$units = get_option($this->lwd_keys[LWD_UNITS]);
 		echo '[lwd-local-weather country="'.$country.'" zipcode="'.$zipcode.'" units="'.$units.'"]Your Title[/lwd-local-weather]';
 	}
 
