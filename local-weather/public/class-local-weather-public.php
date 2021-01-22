@@ -23,13 +23,19 @@
 class Local_Weather_Public {
 
 	/**
-	 * The ID of this plugin.
+	 * Global data arrays to be used for calls to OWM.
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      array    $lwd_countries    Array of countries and codes.
+	 * @var      array    $lwd_countries	Array of countries and codes.
+	 * @var      array    $lwd_units		Array of valid units names.
+	 * @var      array    $lwd_settings		Array of sample settings, with 'keys' used in admin page.
+	 * @var      array    $lwd_keys			Array of key names used in $lwd_settings, the setting names used in admin page.
 	 */
 	private $lwd_countries;
+	private $lwd_units;
+	private $lwd_settings;
+	private $lwd_keys;
 
 	/**
 	 * The ID of this plugin.
@@ -61,8 +67,14 @@ class Local_Weather_Public {
 		$this->local_weather = $local_weather;
 		$this->version = $version;
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/partials/local-weather-countries.php';
+		//insert global data variables for further access
+		require plugin_dir_path( dirname( __FILE__ ) ) . 'data/local-weather-countries.php';
 		$this->lwd_countries = $lwd_countries;
+		require plugin_dir_path( dirname( __FILE__ ) ) . 'data/local-weather-units.php';
+		$this->lwd_units = $lwd_units;
+		require plugin_dir_path( dirname( __FILE__ ) ) . 'data/local-weather-settings.php';
+		$this->lwd_settings = $lwd_settings;
+		$this->lwd_keys = array_keys($lwd_settings);
 
 	}
 

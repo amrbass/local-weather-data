@@ -23,6 +23,21 @@
 class Local_Weather_Admin {
 
 	/**
+	 * Global data arrays to be used for admin settings validation.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array    $lwd_countries	Array of countries and codes.
+	 * @var      array    $lwd_units		Array of valid units names.
+	 * @var      array    $lwd_settings		Array of sample settings, with 'keys' used in admin page.
+	 * @var      array    $lwd_keys			Array of key names used in $lwd_settings, the setting names used in admin page.
+	 */
+	private $lwd_countries;
+	private $lwd_units;
+	private $lwd_settings;
+	private $lwd_keys;
+
+	/**
 	 * The ID of this plugin.
 	 *
 	 * @since    1.0.0
@@ -53,6 +68,15 @@ class Local_Weather_Admin {
 		$this->version = $version;
 		add_action('admin_menu', array( $this, 'addPluginAdminMenu' ), 9);
 		add_action('admin_init', array( $this, 'registerAndBuildFields' ));
+
+		//insert global data variables for further access
+		require plugin_dir_path( dirname( __FILE__ ) ) . 'data/local-weather-countries.php';
+		$this->lwd_countries = $lwd_countries;
+		require plugin_dir_path( dirname( __FILE__ ) ) . 'data/local-weather-units.php';
+		$this->lwd_units = $lwd_units;
+		require plugin_dir_path( dirname( __FILE__ ) ) . 'data/local-weather-settings.php';
+		$this->lwd_settings = $lwd_settings;
+		$this->lwd_keys = array_keys($lwd_settings);
 
 	}
 
@@ -389,9 +413,12 @@ class Local_Weather_Admin {
 		if(!preg_match('/^[a-zA-Z]{2}$/', $output))	{
 			if (strlen($output) > 2) {
 				$output = substr($output, 0, 2);
-			}	else	{
-				$output = 'us';
 			}
+		}
+		//if not a valid country, provide a default one
+		if(!array_key_exists($output, $this->lwd_countries))	{
+			//$output = 'ad';
+			$output = $this->lwd_settings[$this->lwd_keys[LWD_COUNTRY]];
 		}
 
 		return $output;
@@ -416,7 +443,7 @@ class Local_Weather_Admin {
 			if (strlen($output) > 5) {
 				$output = substr($output, 0, 5);
 			}	else	{
-				$output = '08514';
+				$output = $this->lwd_settings[$this->lwd_keys[LWD_ZIPCODE]];
 			}
 		}
 
@@ -432,14 +459,15 @@ class Local_Weather_Admin {
 	 */
 	public function sanitize_local_weather_units( $input )	{
 
-		$units = ['standard','metric','imperial'];	//OWM API units allowed
+		//$units = ['standard','metric','imperial'];	//OWM API units allowed
 
 		//sanitize
 		$output = strtolower(sanitize_text_field($input));
 
-		//chack if entered text is in $units array
-		if (!in_array($output, $units)) {
-			$output = $units[1];
+		//chack if entered text is in OWM units list
+		if (!in_array($output, $this->lwd_units)) {
+			//$output = $this->lwd_units[1];
+			$output = $this->lwd_settings[$this->lwd_keys[LWD_UNITS]];
 		}
 
 		return $output;
@@ -455,18 +483,22 @@ class Local_Weather_Admin {
 	public function sanitize_local_weather_apikey( $input )	{
 
 		//sanitize
-		error_log("inside 'sanitize_local_weather_apikey'");
-		error_log("Passed argument: ".$input);
-
+		//error_log("inside 'sanitize_local_weather_apikey'");
 		$output = sanitize_text_field($input);
 
 		//detect a 5 alpha/digits postal code
 		if(!preg_match('/^[a-zA-Z0-9]{32}$/', $output))	{
-			$output = 'badAPIkey';
+			$output = $this->lwd_settings[$this->lwd_keys[LWD_APIKEY]];
 		}
-		error_log("Returned value: ".$output);
 
 		return $output;
+	}
+
+	private function lwd_generate_button_run()	{
+		$country = get_option('local_weather_country');
+		$zipcode = get_option('local_weather_zipcode');
+		$units = get_option('local_weather_units');
+		echo '[lwd-local-weather country="'.$country.'" zipcode="'.$zipcode.'" units="'.$units.'"]Your Title[/lwd-local-weather]';
 	}
 
 }

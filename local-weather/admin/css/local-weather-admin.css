@@ -21,3 +21,12 @@
 	border-top: 3px solid #E0E0E0;
 	border-bottom: 5px solid #E0E0E0;
 }
+
+.lwd_shortcode {
+	margin:10px auto;
+	padding:5px 10px 5px 10px;
+	border: 1px solid #E0E0E0;
+	color: black;
+	background-color: white;
+	text-align: center;
+}

@@ -13,6 +13,19 @@
  * @subpackage Local_Weather/includes
  */
 
+
+/**
+ * Index references to plugin settings names and default values.
+ * Each value is the proper index to $lwd_keys, providing the proper 'key' and setting name
+ * to access $lwd_settings and then, the default values for each setting.
+ * @since      1.0.0
+ * 
+ */
+const LWD_COUNTRY = 0;
+const LWD_ZIPCODE = 1;
+const LWD_UNITS = 2;
+const LWD_APIKEY = 3;
+
 /**
  * The core plugin class.
  *
