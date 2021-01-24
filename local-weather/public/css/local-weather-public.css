@@ -9,12 +9,11 @@
 	}
 	
 	.lwd_table	{
-		font-family: arial, sans-serif;
-		color: black;
-		background-color: white;
 		border: none;
 		border-collapse: collapse;
 		table-layout: auto;
+		margin-top: 0px;
+		margin-bottom: 0px;
 		margin-left: auto;
 		margin-right: auto;
 	}
@@ -22,10 +21,18 @@
 	.lwd_cell {
 		padding: 0px 0px 0px 20px;
 		text-align: left;
-		border: none;
+		border: 0px solid black;
 	}
 	.lwd_cell2 {
-		padding: 0px 0px 0px 20px;
+		padding: 0px 0px 0px 0px;
 		text-align: center;
 		border: none;
+	}
+	.lwd_row2 {
+		background-color: lightgray;
+		border: 1px solid black;
+		padding: 0px 10px 0px 10px;
+		margin:  10px 10px 20px 10px;
+		text-align: center;
+		text-decoration: solid;
 	}

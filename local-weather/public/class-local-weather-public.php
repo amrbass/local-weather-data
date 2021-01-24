@@ -181,17 +181,33 @@ class Local_Weather_Public {
 			//setlocale(LC_TIME,"ca_ES");
 			setlocale(LC_TIME, "ca_ES");
 			$currentTime = strftime("%c", $data->dt);
+	
+			if(property_exists($data->wind, 'gust')) {
+			  $wind = $this->lwd_ms_to_Beaufort($data->wind->speed)." ". round($data->wind->speed)."-".round($data->wind->gust)." m/s ";
+			}	else {
+			  $wind = $this->lwd_ms_to_Beaufort($data->wind->speed)." ".round($data->wind->speed) . " m/s ";
+			}
+			$windir = "🧭".$this->lwd_degrees_to_windir($data->wind->deg);
+			$sunrise = "🌞 ".strftime("%H:%M", $data->sys->sunrise);
+			$sunset = "🌜 ".strftime("%H:%M", $data->sys->sunset);
 
-			$o .= '<table class="lwd_table" style="width:100%;">';
-			$o .= '<caption>Weather now in '.$data->name.' ('.$country_name.')<br />'.$currentTime.'</caption>';
-			$o .= '<tr><td class="lwd_cell2"><img src="http://openweathermap.org/img/w/'.$data->weather[0]->icon.'.png"/></td><td class="lwd_cell">'.ucwords($data->weather[0]->description).'</td><td class="lwd_cell"></td></tr>';
-			$o .= '<tr><td class="lwd_cell">Temperature: '.round($data->main->temp).' ºC</td><td class="lwd_cell">(feels like '.round($data->main->feels_like).' ªC)</td></tr>';
-			$o .= '<tr><td class="lwd_cell">Humidity: '.round($data->main->humidity).' %</td><td class="lwd_cell"></td></tr>';
-			$o .= '<tr><td class="lwd_cell">Pressure: '.round($data->main->pressure).' hPa</td><td class="lwd_cell"></td></tr>';
+			$o .= '<table class="lwd_table" style="">';
+			//special case ||*||
+			if (strtolower($lwd_atts['country']) == 'es') {
+				$o .= '<caption style="font-size:120%;text-align:center;text-decoration:solid;margin:10px;padding:0px 10px 0px 10px;">El temps ara a '.$data->name.'<br />'.$currentTime.'</caption>';
+			}	else	{
+				$o .= '<caption style="font-size:120%;text-align:center;text-decoration:solid;margin:10px;padding:0px 10px 0px 10px;">Weather now in '.$data->name.' ('.$country_name.')<br />'.$currentTime.'</caption>';
+			}
+			$o .= '<tr class="lwd_row2" style="background-color: lightgray;border: 0px solid black;margin:0px;padding:0px;"><td class="lwd_cell2"><img src="http://openweathermap.org/img/w/'.$data->weather[0]->icon.'.png"/></td><td class="lwd_cell2">'.ucwords($data->weather[0]->description).'</td></tr>';
+			$o .= '<tr><td class="lwd_cell">Temperatura: '.round($data->main->temp).' ºC</td><td class="lwd_cell">(sensació de '.round($data->main->feels_like).' ªC)</td></tr>';
+			$o .= '<tr><td class="lwd_cell">Humitat: '.round($data->main->humidity).' %</td><td class="lwd_cell">Pressió: '.round($data->main->pressure).' hPa</td></tr>';
+			$o .= '<tr><td class="lwd_cell">'.$wind.'</td><td class="lwd_cell">'.$windir.'</td></tr>';
+			$o .= '<tr><td class="lwd_cell">Nuvolositat: '.$data->clouds->all.' %</td><td class="lwd_cell">Visibilitat: '.$data->visibility.' m</td></tr>';
+			$o .= '<tr><td class="lwd_cell">'.$sunrise.'</td><td class="lwd_cell">'.$sunset.'</td></tr>';
 			$o .= '</table>';
 
 			//only for debur purpose. Comment this line when done
-			$o .= '<br /><div style="color:white;padding:10px;background-color:black;overflow:hidden;"><pre><code>'.json_encode($data, JSON_PRETTY_PRINT).'</code></pre></div>';
+			//$o .= '<div style="text-align: left;color:white;padding:10px;background-color:black;margin:10px 0px 10px 0px;padding:10px;overflow:hidden;"><pre><code>'.json_encode($data, JSON_PRETTY_PRINT).'</code></pre></div>';
 
 		}
 
