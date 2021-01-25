@@ -178,9 +178,11 @@ class Local_Weather_Public {
 			$o .= '<h4 style="color:red;">'.$data->message.' for ZIP code '.$lwd_atts["zipcode"].' in '.$country_name.'</h4>';
 		}	else	{
 			
-			//setlocale(LC_TIME,"ca_ES");
+			//date_default_timezone_get() is giving 'UTC' as the current timezon???
+			//date_default_timezone_set(get_option('timezone_string'));
 			setlocale(LC_TIME, "ca_ES");
-			$currentTime = strftime("%c", $data->dt);
+			$currentTime = strftime("%a %e %B %G %k:%M", $data->dt + $data->timezone);
+			//$currentTime = strftime("%a %e %B %G %k:%M", current_time( 'timestamp', 0 ));
 	
 			if(property_exists($data->wind, 'gust')) {
 			  $wind = $this->lwd_ms_to_Beaufort($data->wind->speed)." ". round($data->wind->speed)."-".round($data->wind->gust)." m/s ";
@@ -188,8 +190,8 @@ class Local_Weather_Public {
 			  $wind = $this->lwd_ms_to_Beaufort($data->wind->speed)." ".round($data->wind->speed) . " m/s ";
 			}
 			$windir = "🧭".$this->lwd_degrees_to_windir($data->wind->deg);
-			$sunrise = "🌞 ".strftime("%H:%M", $data->sys->sunrise);
-			$sunset = "🌜 ".strftime("%H:%M", $data->sys->sunset);
+			$sunrise = "🌞 ".strftime("%H:%M", $data->sys->sunrise + $data->timezone);
+			$sunset = "🌜 ".strftime("%H:%M", $data->sys->sunset + $data->timezone);
 
 			$o .= '<table class="lwd_table" style="">';
 			//special case ||*||
