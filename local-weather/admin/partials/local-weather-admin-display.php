@@ -15,18 +15,20 @@
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 	<div class="lwd_display">
-		<?php echo $this->local_weather . " (v" . $this->version . ")"; ?>
+		<?php echo $this->local_weather . " (v" . $this->version . ") WP plugin <small>by @amrbass</small>"; ?>
 		<div class="lwd_time">
-			<h2><img src="http://openweathermap.org/img/w/10d.png" class="lwd_weather_icon" />local-weather WP plugin <small>by @amrbass</small></h2>
+			<h2><img src="http://openweathermap.org/img/w/10d.png" class="lwd_weather_icon" /><?php esc_html_e('Local Weather', 'local-weather');?></h2>
 		</div>
 		<div>
-			<p><big>Display weather data from <b>OpenWeatherMap</b>.</big></p>
-			<p>In your selected page/post, insert a <b>shortcode</b> similar to this:</p>
-			<p><code>[lwd-local-weather country="us" zipcode="08514" units="metric"]Your Title[/lwd-local-weather]</code></p>
-			<p>Your own OpenWeatherMap API Key required!</p>
+			<p><big><?php echo sprintf(esc_html__('Display weather data from %1$sOpenWeatherMap%2$s.', 'local-weather'), '<b>', '</b>');?></big></p>
+			<p><?php echo sprintf(esc_html__('In your selected page/post, insert a %1$sshortcode%2$s. See these shortcode format examples:', 'local-weather'), '<b>', '</b>');?></p>
+			<p><code> [lwd-local-weather] </code></p>
+			<p><code> [lwd-local-weather country="ad" zipcode="AD500" units="metric"] </code></p>
+			<p><code> [lwd-local-weather country="us" zipcode="08514" units="standard"]Your Title[/lwd-local-weather] </code></p>
+			<p><?php esc_html_e('Your own OpenWeatherMap API Key required! Get yours at', 'local-weather');?> <a href="https://openweathermap.org/appid" target="_blank">OpenWeatherMap</a></p>
 		</div>
 		<div style="font-size:120%;background-color:#dddddd;border:1px solid gray;margin:10px;padding:10px;overflow:hidden;">
-			<p align="center"><big><b>Generate a shortcode according to your current settings</b></big></p>
+			<p align="center"><big><b><?php esc_html_e('Generate a shortcode according to your current settings', 'local-weather');?></b></big></p>
 			<form method="post">
 				<input type="submit" name="lwd_generate_button" class="button" value="Generate" />
 			</form>
@@ -37,10 +39,10 @@
 					}
 				?>
 			</code></p>
-			<p style="text-align:right;"><small>(copy and paste into the required place)</small></p>
+			<p style="text-align:right;"><small><?php esc_html_e('(copy and paste into the required place)', 'local-weather');?></small></p>
 		</div>
 		<div class="lwd_time">
-			<p><small>Based on WordPress Plugin <b>Boilerplate</b></small></p>
-			<a href="https://ancdretaeixample.cat//sw/info/local-weather/index.php" target="_blank">Plugin web link</a>
+			<p><small><?php echo sprintf(esc_html__('Based on WordPress %1$sBoilerplate%2$s plugin example.', 'local-weather'), '<b>', '</b>');?></small></p>
+			<a href="https://ancdretaeixample.cat/sw/info/local-weather/index.php" target="_blank"><?php esc_html_e('Plugin web link', 'local-weather');?></a>
 		</div>
 	</div>

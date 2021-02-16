@@ -10,7 +10,7 @@
  *
  * @link              https://ancdretaeixample.cat//sw/info/local-weather/index.php
  * @since             1.0.0
- * @package           Loacal_Weather
+ * @package           Local_Weather
  *
  * @wordpress-plugin
  * Plugin Name:       Local Weather
@@ -35,7 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'LOCAL_WEATHER_VERSION', '1.0.2' );
+define( 'LOCAL_WEATHER_VERSION', '1.0.3' );
 
 /**
  * The code that runs during plugin activation.

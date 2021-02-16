@@ -134,10 +134,12 @@ class Local_Weather_Admin {
 	public function addPluginAdminMenu() {
 
 		//add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position );
-		add_menu_page(  $this->local_weather, 'Local Weather', 'administrator', $this->local_weather, array( $this, 'displayPluginAdminDashboard' ), 'dashicons-cloud', 26 );
+		add_menu_page(  $this->local_weather, esc_html__('Local Weather', 'local-weather'), 'administrator',
+			$this->local_weather, array( $this, 'displayPluginAdminDashboard' ), 'dashicons-cloud', 26 );
 		
 		//add_submenu_page( '$parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
-		add_submenu_page( $this->local_weather, 'Local Weather Settings', 'Settings', 'administrator', $this->local_weather.'-settings', array( $this, 'displayPluginAdminSettings' ));
+		add_submenu_page( $this->local_weather, esc_html__('Local Weather Settings', 'local-weather'), esc_html__('Settings', 'local-weather'),'administrator',
+			$this->local_weather.'-settings', array( $this, 'displayPluginAdminSettings' ));
 
 	}
 	
@@ -207,7 +209,7 @@ class Local_Weather_Admin {
 			// ID used to identify this section and with which to register options
 			'local_weather_general_section',
 			// Title to be displayed on the administration page
-			'Basic options:',
+			esc_html__('Basic options:', 'local-weather'),
 			// Callback used to render the description of the section
 			array( $this, 'local_weather_display_general_account' ),
 			// Page on which to add this section of options
@@ -224,12 +226,12 @@ class Local_Weather_Admin {
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
 				'wp_data'			=> 'option',
-				'append_text'		=> ' (2 letters country code)',
+				'append_text'		=> esc_html__(' (2 letters country code)', 'local-weather'),
 				'text_size'			=> '2'
 		);
 		add_settings_field(
 				$this->lwd_keys[LWD_COUNTRY],
-				'1) Country code:',
+				esc_html__('1) Country code:', 'local-weather'),
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
 				'local_weather_general_section',
@@ -251,12 +253,12 @@ class Local_Weather_Admin {
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
 				'wp_data'			=> 'option',
-				'append_text'		=> ' (a valid postal code)',
+				'append_text'		=> esc_html__(' (a valid postal code)', 'local-weather'),
 				'text_size'			=> '10'
 		);
 		add_settings_field(
 				$this->lwd_keys[LWD_ZIPCODE],
-				'2) Postal code:',
+				esc_html__('2) Postal code:', 'local-weather'),
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
 				'local_weather_general_section',
@@ -278,12 +280,12 @@ class Local_Weather_Admin {
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
 				'wp_data'			=> 'option',
-				'append_text'		=> ' (standard, metric or imperial)',
+				'append_text'		=> esc_html__(' (standard, metric or imperial)', 'local-weather'),
 				'text_size'			=> '8'
 		);
 		add_settings_field(
 				$this->lwd_keys[LWD_UNITS],
-				'3) Units:',
+				esc_html__('3) Units:', 'local-weather'),
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
 				'local_weather_general_section',
@@ -305,11 +307,11 @@ class Local_Weather_Admin {
 				'get_options_list'	=> '',
 				'value_type'		=> 'normal',
 				'wp_data'			=> 'option',
-				'append_text'		=> ' (your OWM API key)',
+				'append_text'		=> esc_html__(' (32 chars alphanumeric key)', 'local-weather'),
 		);
 		add_settings_field(
 				$this->lwd_keys[LWD_APIKEY],
-				'4) OpenWeatherMap API Key:',
+				esc_html__('4) OpenWeatherMap API Key:', 'local-weather'),
 				array( $this, 'local_weather_render_settings_field' ),
 				'local_weather_general_settings',
 				'local_weather_general_section',
@@ -329,12 +331,17 @@ class Local_Weather_Admin {
 	 * @since	1.0.0
 	 */
 	public function local_weather_display_general_account( $arg ) {
-		$o = "<div><h4>Enter setting's values required for <b>Local Weather</b> operation. See parameter descriptions.</h4>";
-		$o .= '<p>'.$arg['title'].'</p>';
-		$o .= '<ol><li><b>Country code:</b> a 2 letters contry code as defined in ISO 3166-1 alpha-2.</li>';
-		$o .= '<li><b>Postal code:</b> your target area postal code</li>';
-		$o .= '<li><b>Units:</b> required measurement units system (standard, metric, imperial)</li>';
-		$o .= '<li><b>Your own OpenWeatherMap API Key</b> (do not share nor publish)</li></ol></div>';
+		$o = sprintf( esc_html__( '%1$sEnter the default setting values to be used by %2$sLocal Weather%3$s. See parameters description below.%4$s', 'local-weather' ),
+			'<div><h4>', '<b>', '</b>', '</h4>');
+		//$o .= '<p>'.$arg['title'].'</p>';
+		$o .= sprintf( esc_html__( '%1$sCountry code:%2$s a 2 letters contry code as defined in ISO 3166-1 alpha-2.%3$s', 'local-weather' ),
+			'<ol><li><b>', '</b>', '</li>');
+		$o .= sprintf( esc_html__( '%1$sPostal code:%2$s your target area postal code.%3$s', 'local-weather' ),
+			'<li><b>', '</b>', '</li>');
+		$o .= sprintf( esc_html__( '%1$sUnits:%2$s required measurement units system (standard, metric, imperial)%3$s', 'local-weather' ),
+			'<li><b>', '</b>', '</li>');
+		$o .= sprintf( esc_html__( '%1$sYour own OpenWeatherMap API Key%2$s (do not share nor publish)%3$s', 'local-weather' ),
+			'<li><b>', '</b>', '</li></ol></div>');
 
 		echo $o;
 	}
