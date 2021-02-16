@@ -1,12 +1,12 @@
 # local-weather-data
-The project target is building my first WP plugin.
-It's main function is retrieve weather data from OpenWeatherMap and display it on a user's web page or post, using a shortcode.
+This project target is to build my first WP plugin.
+It's main function is to retrieve current weather data from OpenWeatherMap, and display it on a user's web page or post, using a shortcode.
 
-I have no experience on WP plugins, so will try to follow WP documentation and the Boilerplate example.
+Not having experience in WP plugins, I'll follow the available WP documentation and, more specifically, the Boilerplate examples.
 
-The goal is to configure an API Key and other user's data as WP admin, then generate a shortcode to embed into a page or post.
+The idea is to introduce the required data and a valit API Key for OpenWeatherMap, from WP admin pages. Then generate a shortcode to embed into a page or post.
 
-Finally, auto insert the shortcode in a desired place, page or post.
+Finally, insert the shortcode in a desired place, page or post.
 
 * Plugin name: `local-weather`
 * Function and global variables prefix: `lwd_<valid_name>`
