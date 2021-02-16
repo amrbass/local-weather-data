@@ -2,7 +2,7 @@
 This project target is to build my first WP plugin.
 It's main function is to retrieve current weather data from OpenWeatherMap, and display it on a user's web page or post, using a shortcode.
 
-Not having experience in WP plugins, I'll follow the available WP documentation and, more specifically, the Boilerplate examples.
+Having no experience with WP plugins, I'm following the available WP documentation and, more specifically, the Boilerplate examples.
 
 The idea is to introduce the required data and a valit API Key for OpenWeatherMap, from WP admin pages. Then generate a shortcode to embed into a page or post.
 
