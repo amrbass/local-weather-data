@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2021-02-18 05:49+0100\n"
-"PO-Revision-Date: 2021-02-18 05:51+0100\n"
+"PO-Revision-Date: 2021-02-18 06:09+0100\n"
 "Last-Translator: amrbass <amrbass@gmail.com>\n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -158,6 +158,7 @@ msgid ""
 msgstr ""
 "%1$s Error: %2$s per codi postal \"%3$s\" i codi de país \"%4$s\" (%5$s).%6$s"
 
+# Date / time format string, according to: https://wordpress.org/support/article/formatting-date-and-time/
 #: public/class-local-weather-public.php:196
 msgid "D, M j, Y H:i"
 msgstr "D j M Y H:i"
@@ -242,10 +243,3 @@ msgstr "Huracà"
 #: public/class-local-weather-public.php:316
 msgid "unknown value"
 msgstr "valor desconegut"
-
-# Date format codes according to https://www.php.net/manual/en/function.strftime.php
-#~ msgid "%a %e %B %G %k:%M"
-#~ msgstr "%a %e %B %G %k:%M"
-
-#~ msgid " (your OWM API key)"
-#~ msgstr " (la teva clau API d'OWM)"
