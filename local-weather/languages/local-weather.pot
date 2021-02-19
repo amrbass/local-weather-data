@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: local-weather\n"
-"POT-Creation-Date: 2021-02-18 05:49+0100\n"
+"POT-Creation-Date: 2021-02-19 17:09+0100\n"
 "PO-Revision-Date: 2021-02-11 16:45+0100\n"
 "Last-Translator: amrbass <amrbass@gmail.com>\n"
 "Language-Team: jomateix\n"
@@ -129,96 +129,122 @@ msgstr ""
 msgid "Plugin web link"
 msgstr ""
 
-#: public/class-local-weather-public.php:180
+#: public/class-local-weather-public.php:193
 msgid "bad country code"
 msgstr ""
 
-#: public/class-local-weather-public.php:192
+#: public/class-local-weather-public.php:205
 #, php-format
 msgid "%1$s Error: %2$s for postal code \"%3$s\" and country code \"%4$s\" (%5$s).%6$s"
 msgstr ""
 
-#: public/class-local-weather-public.php:196
+#: public/class-local-weather-public.php:228
 msgid "D, M j, Y H:i"
 msgstr ""
 
-#: public/class-local-weather-public.php:211
+#: public/class-local-weather-public.php:243
 #, php-format
 msgid "%1$sThe weather now in %2$s%3$s%4$s%5$s"
 msgstr ""
 
-#: public/class-local-weather-public.php:215
+#: public/class-local-weather-public.php:247
 #, php-format
 msgid "%1$sThe weather now in %2$s (%3$s)%4$s%5$s%6$s"
 msgstr ""
 
-#: public/class-local-weather-public.php:220
+#: public/class-local-weather-public.php:252
 #, php-format
 msgid "%1$sTemperature: %2$s %3$s%4$s(feels like %5$s %3$s)%6$s"
 msgstr ""
 
-#: public/class-local-weather-public.php:222
+#: public/class-local-weather-public.php:254
 #, php-format
 msgid "%1$sHumidity: %2$s %3$s%4$sPressure: %5$s %6$s%7$s"
 msgstr ""
 
-#: public/class-local-weather-public.php:225
+#: public/class-local-weather-public.php:257
 #, php-format
 msgid "%1$sCloudiness: %2$s %3$s%4$sVisibility: %5$s %6$s%7$s"
 msgstr ""
 
-#: public/class-local-weather-public.php:290
+#: public/class-local-weather-public.php:262
+#, php-format
+msgid "%1$s🌻 Air quality:%2$s%3$s%4$s"
+msgstr ""
+
+#: public/class-local-weather-public.php:327
 msgid "Calm"
 msgstr ""
 
-#: public/class-local-weather-public.php:292
+#: public/class-local-weather-public.php:329
 msgid "Light air"
 msgstr ""
 
-#: public/class-local-weather-public.php:294
+#: public/class-local-weather-public.php:331
 msgid "Light breeze"
 msgstr ""
 
-#: public/class-local-weather-public.php:296
+#: public/class-local-weather-public.php:333
 msgid "Gentle breeze"
 msgstr ""
 
-#: public/class-local-weather-public.php:298
+#: public/class-local-weather-public.php:335
 msgid "Moderate breeze"
 msgstr ""
 
-#: public/class-local-weather-public.php:300
+#: public/class-local-weather-public.php:337
 msgid "Fresh breeze"
 msgstr ""
 
-#: public/class-local-weather-public.php:302
+#: public/class-local-weather-public.php:339
 msgid "Strong breeze"
 msgstr ""
 
-#: public/class-local-weather-public.php:304
+#: public/class-local-weather-public.php:341
 msgid "Moderate gale"
 msgstr ""
 
-#: public/class-local-weather-public.php:306
+#: public/class-local-weather-public.php:343
 msgid "Gale"
 msgstr ""
 
-#: public/class-local-weather-public.php:308
+#: public/class-local-weather-public.php:345
 msgid "Strong gale"
 msgstr ""
 
-#: public/class-local-weather-public.php:310
+#: public/class-local-weather-public.php:347
 msgid "Storm"
 msgstr ""
 
-#: public/class-local-weather-public.php:312
+#: public/class-local-weather-public.php:349
 msgid "Violent storm"
 msgstr ""
 
-#: public/class-local-weather-public.php:314
+#: public/class-local-weather-public.php:351
 msgid "Hurricane"
 msgstr ""
 
-#: public/class-local-weather-public.php:316
+#: public/class-local-weather-public.php:353
+#: public/class-local-weather-public.php:380
 msgid "unknown value"
+msgstr ""
+
+#: public/class-local-weather-public.php:370
+msgid "VERY GOOD 🌻"
+msgstr ""
+
+#: public/class-local-weather-public.php:372
+msgid "GOOD 😀"
+msgstr ""
+
+#: public/class-local-weather-public.php:374
+msgid "MEDIUM 😐"
+msgstr ""
+
+#: public/class-local-weather-public.php:376
+msgid "BAD 🙁"
+msgstr ""
+
+#: public/class-local-weather-public.php:378
+msgid ">100 VERY BAD 🤢"
 msgstr ""

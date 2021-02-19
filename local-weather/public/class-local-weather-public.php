@@ -38,6 +38,19 @@ class Local_Weather_Public {
 	private $lwd_keys;
 
 	/**
+	 * Data to be used for calls to OWM air quality API.
+	 *
+	 * @since    1.0.3
+	 * @access   private
+	 * @var      float    $lon		longitude coordinate of selected place.
+	 * @var      float    $lat		latitude coordinate of selected place.
+	 * @var      array    $limits	limit values for in-segment CAQI index calculation.
+	 */
+	private $lon = 2.153833;
+	private $lat = 41.385333;
+	private $limits = ['Clow' => 0, 'Chigh' => 1, 'Ilow' => 0, 'Ihigh' => 1];
+
+	/**
 	 * The ID of this plugin.
 	 *
 	 * @since    1.0.0
@@ -193,6 +206,25 @@ class Local_Weather_Public {
 				'<p style="color:red;">', $data->message, $lwd_atts["zipcode"], $lwd_atts['country'], $country_name, '</p>');
 		}	else	{
 
+			//get air quality data also from OWM
+
+			//get coordinates for air quality access
+			if(property_exists($data->coord, 'lon'))
+				$this->lon = $data->coord->lon;
+			if(property_exists($data->coord, 'lat'))
+				$this->lat = $data->coord->lat;
+
+			$googleApiUrl = "http://api.openweathermap.org/data/2.5/air_pollution?lat=".$this->lat."&lon=".$this->lon."&APPID=".$apiKey;
+			$airq = $this->lwd_getWeather($googleApiUrl);
+			$caqi = ['NO2' => 0, 'PM10' => 0, 'O3' => 0, 'PM2.5' => 0];
+			if(property_exists($airq, 'list'))	{
+				$caqi['NO2'] = $this->calc_index_NO2($airq->list[0]->components->no2);
+				$caqi['PM10'] = $this->calc_index_PM10($airq->list[0]->components->pm10);
+				$caqi['O3'] = $this->calc_index_O3($airq->list[0]->components->o3);
+				$caqi['PM2.5'] = $this->calc_index_PM25($airq->list[0]->components->pm2_5);
+				$aqi_msg = $this->eu_air_quality($caqi);
+			}
+
 			$currentTime = date_i18n( __('D, M j, Y H:i', 'local-weather' ), $data->dt + $data->timezone);
 			//$currentTime = strftime( __("%a %e %B %G %k:%M", 'local-weather' ), $data->dt);
 	
@@ -225,6 +257,11 @@ class Local_Weather_Public {
 			$o .= sprintf( esc_html__( '%1$sCloudiness: %2$s %3$s%4$sVisibility: %5$s %6$s%7$s', 'local-weather' ),
 				'<tr><td class="lwd_cell">', $data->clouds->all, '%', '</td><td class="lwd_cell">', $data->visibility, 'm', '</td></tr>');
 			$o .= '<tr><td class="lwd_cell">'.$sunrise.'</td><td class="lwd_cell">'.$sunset.'</td></tr>';
+			if (property_exists($airq, 'list')) {
+				//$o .= '<tr><td class="lwd_cell">🌻 Qualitat aire:</td><td class="lwd_cell">'.$aqi_msg.'</td></tr>';
+				$o .= sprintf( esc_html__( '%1$s🌻 Air quality:%2$s%3$s%4$s', 'local-weather' ),
+					'<tr><td class="lwd_cell">', '</td><td class="lwd_cell">', $aqi_msg, '</td></tr>');
+			}
 			$o .= '</table>';
 
 			//only for debur purpose. Comment this line when done
@@ -316,5 +353,194 @@ class Local_Weather_Public {
 			$desc = esc_html__( 'unknown value', 'local-weather' );
 		return("$desc");
 	}
+
+	/**
+	 * Build the proper icq message from collected air quality data.
+	 *
+	 * @since	1.0.3
+	 * @access	private
+	 * @param	array	$caqi	array of all calculated quality index.
+	 * @return	string	final CAQI text message.
+	 */
+	private function eu_air_quality($caqi)	{
+		$index = max($caqi);
+		$key = array_search($index, $caqi);
+		$desc = $index.'/100 ';
+		if($index < 25)
+			$desc .= esc_html__( 'VERY GOOD 🌻', 'local-weather' );
+		elseif($index < 50)
+			$desc .= esc_html__( 'GOOD 😀', 'local-weather' );
+		elseif($index < 75)
+			$desc .= esc_html__( 'MEDIUM 😐', 'local-weather' );
+		elseif($index <= 100)
+			$desc .= esc_html__( 'BAD 🙁', 'local-weather' );
+		elseif($index > 100)
+			$desc = esc_html__( '>100 VERY BAD 🤢', 'local-weather' );
+		else
+			$desc = esc_html__( 'unknown value', 'local-weather' );
+		
+		//$this->dlog($desc.' ('.$key.')');
+		return($desc.' ('.$key.')');
+	}
+
+	/**
+	 * Calculate partial NO2 quality index.
+	 *
+	 * @since	1.0.3
+	 * @access	private
+	 * @param	float	$NO2	array of all calculated quality index.
+	 * @return	float	calculated partial index.
+	 */
+	private function calc_index_NO2($NO2)	{
+		if($NO2 < 50) {
+			$this->limits['Ilow'] = 0;
+			$this->limits['Ihigh'] = 25;
+			$this->limits['Clow'] = 0;
+			$this->limits['Chigh'] = 50;
+		}	elseif($NO2 < 100)	{
+			$this->limits['Ilow'] = 25;
+			$this->limits['Ihigh'] = 50;
+			$this->limits['Clow'] = 50;
+			$this->limits['Chigh'] = 100;
+		}	elseif($NO2 < 200)	{
+			$this->limits['Ilow'] = 50;
+			$this->limits['Ihigh'] = 75;
+			$this->limits['Clow'] = 100;
+			$this->limits['Chigh'] = 200;
+		}	elseif($NO2 <= 400)	{
+			$this->limits['Ilow'] = 75;
+			$this->limits['Ihigh'] = 100;
+			$this->limits['Clow'] = 200;
+			$this->limits['Chigh'] = 400;
+		}	else	{	// >400
+			return 101;
+		}
+		return $this->idx_calc($NO2);
+	}
+
+	/**
+	 * Calculate partial PM10 quality index.
+	 *
+	 * @since	1.0.3
+	 * @access	private
+	 * @param	float	$PM10	array of all calculated quality index.
+	 * @return	float	calculated partial index.
+	 */
+	private function calc_index_PM10($PM10)	{
+		if($PM10 < 25) {
+			$this->limits['Ilow'] = 0;
+			$this->limits['Ihigh'] = 25;
+			$this->limits['Clow'] = 0;
+			$this->limits['Chigh'] = 25;
+		}	elseif($PM10 < 50)	{
+			$this->limits['Ilow'] = 25;
+			$this->limits['Ihigh'] = 50;
+			$this->limits['Clow'] = 25;
+			$this->limits['Chigh'] = 50;
+		}	elseif($PM10 < 90)	{
+			$this->limits['Ilow'] = 50;
+			$this->limits['Ihigh'] = 75;
+			$this->limits['Clow'] = 50;
+			$this->limits['Chigh'] = 90;
+		}	elseif($PM10 <= 180)	{
+			$this->limits['Ilow'] = 75;
+			$this->limits['Ihigh'] = 100;
+			$this->limits['Clow'] = 90;
+			$this->limits['Chigh'] = 180;
+		}	else	{	// >180
+			return 101;
+		}
+		return $this->idx_calc($PM10);
+	}
+
+	/**
+	 * Calculate partial O3 quality index.
+	 *
+	 * @since	1.0.3
+	 * @access	private
+	 * @param	float	$O3	array of all calculated quality index.
+	 * @return	float	calculated partial index.
+	 */
+	private function calc_index_O3($O3)	{
+		if($O3 < 60) {
+			$this->limits['Ilow'] = 0;
+			$this->limits['Ihigh'] = 25;
+			$this->limits['Clow'] = 0;
+			$this->limits['Chigh'] = 60;
+		}	elseif($O3 < 120)	{
+			$this->limits['Ilow'] = 25;
+			$this->limits['Ihigh'] = 50;
+			$this->limits['Clow'] = 60;
+			$this->limits['Chigh'] = 120;
+		}	elseif($O3 < 180)	{
+			$this->limits['Ilow'] = 50;
+			$this->limits['Ihigh'] = 75;
+			$this->limits['Clow'] = 120;
+			$this->limits['Chigh'] = 180;
+		}	elseif($O3 <= 240)	{
+			$this->limits['Ilow'] = 75;
+			$this->limits['Ihigh'] = 100;
+			$this->limits['Clow'] = 180;
+			$this->limits['Chigh'] = 240;
+		}	else	{	// >240
+			return 101;
+		}
+		return $this->idx_calc($O3);
+	}
+
+	/**
+	 * Calculate partial PM25 quality index.
+	 *
+	 * @since	1.0.3
+	 * @access	private
+	 * @param	float	$PM25	array of all calculated quality index.
+	 * @return	float	calculated partial index.
+	 */
+	private function calc_index_PM25($PM25)	{
+		if($PM25 < 15) {
+			$this->limits['Ilow'] = 0;
+			$this->limits['Ihigh'] = 25;
+			$this->limits['Clow'] = 0;
+			$this->limits['Chigh'] = 15;
+		}	elseif($PM25 < 30)	{
+			$this->limits['Ilow'] = 25;
+			$this->limits['Ihigh'] = 50;
+			$this->limits['Clow'] = 15;
+			$this->limits['Chigh'] = 30;
+		}	elseif($PM25 < 55)	{
+			$this->limits['Ilow'] = 50;
+			$this->limits['Ihigh'] = 75;
+			$this->limits['Clow'] = 30;
+			$this->limits['Chigh'] = 55;
+		}	elseif($PM25 <= 110)	{
+			$this->limits['Ilow'] = 75;
+			$this->limits['Ihigh'] = 100;
+			$this->limits['Clow'] = 55;
+			$this->limits['Chigh'] = 110;
+		}	else	{	// >110
+			return 101;
+		}
+		return $this->idx_calc($PM25);
+	}
+
+	/**
+	 * Equation to calculate index value for a given pollutant concentration.
+	 *
+	 * @since	1.0.3
+	 * @access	private
+	 * @param	float	$C	pollutant concentration in μg/m3.
+	 * @return	float	calculated partial index rounded.
+	 * I = the (Air Quality) index,
+	 * C = the pollutant concentration,
+	 * Clow = the concentration breakpoint that is ≤ C,
+	 * Chigh = the concentration breakpoint that is ≥ C,
+	 * Ilow = the index breakpoint corresponding to Clow,
+	 * Ihigh = the index breakpoint corresponding to Chigh.
+	 */
+	private function idx_calc($C)	{
+		$I = (($this->limits['Ihigh'] - $this->limits['Ilow'])/($this->limits['Chigh'] - $this->limits['Clow']) * ($C - $this->limits['Clow']) + $this->limits['Ilow']);
+		return round($I);
+	}
+
 
 }
