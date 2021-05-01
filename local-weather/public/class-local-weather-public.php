@@ -234,8 +234,8 @@ class Local_Weather_Public {
 			  $wind = $this->lwd_ms_to_Beaufort($data->wind->speed, $lwd_atts['units'])." ".round($data->wind->speed);
 			}
 			$windir = "🧭".$this->lwd_degrees_to_windir($data->wind->deg);
-			$sunrise = "🌞 ".strftime("%H:%M", $data->sys->sunrise);
-			$sunset = "🌜 ".strftime("%H:%M", $data->sys->sunset);
+			$sunrise = "🌞 ".strftime("%H:%M", $data->sys->sunrise + $data->timezone);
+			$sunset = "🌜 ".strftime("%H:%M", $data->sys->sunset + $data->timezone);
 
 			$o .= '<table class="lwd_table" style="">';
 			//special case ||*||
